@@ -3,16 +3,13 @@ const router = express.Router()
 import gateway from '../config/gatewayConfig'
 import dotenv from 'dotenv'
 import Payment from '../models/paymentModel'
+import { Request, Response } from 'express'
 
 dotenv.config()
 
-router.get('/', async (req: any, res: any) => {
+router.get('/', async (req: Request, res: Response) => {
   try {
     const userEmail = req.session.userEmail
-
-    if (!userEmail) {
-      return res.status(401).send('Unauthorized')
-    }
 
     const paymentInfo = await Payment.findOne({ email: userEmail })
 

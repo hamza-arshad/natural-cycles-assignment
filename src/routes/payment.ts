@@ -3,16 +3,13 @@ const router = express.Router()
 import gateway from '../config/gatewayConfig'
 import dotenv from 'dotenv'
 import Payment from '../models/paymentModel'
+import { Request, Response } from 'express'
 
 dotenv.config()
 
-router.get('/', async (req: any, res: any) => {
+router.get('/', async (req: Request, res: Response) => {
   try {
     const userEmail = req.session.userEmail
-
-    if (!userEmail) {
-      return res.status(401).send('Unauthorized')
-    }
 
     const paymentInfo = await Payment.findOne({ email: userEmail })
 
@@ -22,22 +19,10 @@ router.get('/', async (req: any, res: any) => {
       )
 
       if (subscription.status === 'Active') {
-        res.render('status', {
-          status: subscription.status,
-          subscriptionType: subscription.planId,
-          expiryDate: subscription.paidThroughDate,
-          thermometerIncluded: subscription.addOns?.length !== 0,
-          amountPaid:
-            subscription.transactions && subscription.transactions.length > 0
-              ? subscription.transactions[0].amount
-              : 0,
-        })
-      } else {
-        res.render('payment')
+        return res.redirect('/status')
       }
-    } else {
-      res.render('payment')
     }
+    res.render('payment')
   } catch (error) {
     console.error('Error fetching subscription:', error)
     res.status(500).send('Internal Server Error')

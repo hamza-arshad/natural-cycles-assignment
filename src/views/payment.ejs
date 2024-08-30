@@ -27,12 +27,7 @@
           </select>
 
           <label for="thermometer">
-            <input
-              type="checkbox"
-              id="thermometer"
-              name="thermometer"
-              value="yes"
-            />
+            <input type="checkbox" id="thermometer" name="thermometer" />
             Include Thermometer?
           </label>
 
@@ -59,9 +54,7 @@
 
               // Validate the form before hiding it
               const subscriptionPlan = $('#subscription-plan').val()
-              const thermometer = $('#thermometer').is(':checked')
-                ? 'yes'
-                : 'no'
+              const thermometerIncluded = $('#thermometer').is(':checked')
 
               if (!subscriptionPlan) {
                 $('#checkout-message').html(
@@ -95,7 +88,7 @@
                     data: {
                       paymentMethodNonce: payload.nonce,
                       subscriptionPlan: subscriptionPlan,
-                      thermometer: thermometer,
+                      thermometerIncluded: thermometerIncluded,
                     },
                     success: function (result) {
                       if (result.success) {
