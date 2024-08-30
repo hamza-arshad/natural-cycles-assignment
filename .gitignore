@@ -1,0 +1,37 @@
+# Ignore node_modules
+node_modules/
+
+# Ignore TypeScript compiled files
+dist/
+
+# Ignore npm debug log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Ignore environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+
+# Ignore log files
+*.log
+
+# Ignore compiled JavaScript and maps
+*.js
+*.js.map
+*.d.ts
+
+# Ignore build and coverage folders
+build/
+coverage/
+
+# Ignore IDE/editor config files
+.vscode/
+.idea/

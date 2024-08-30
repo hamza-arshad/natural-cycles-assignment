@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Status</title>
+    <link rel="stylesheet" href="/styles/status.css" />
+    <link rel="stylesheet" href="/styles/main.css">
+  </head>
+  <body>
+    <div class="status-container">
+      <a href="/logout" class="logout-button">Logout</a>
+      <h2>Payment Status</h2>
+
+      <p><strong>Status:</strong> <%= status %></p>
+
+      <% if (subscriptionType) { %>
+        <p><strong>Subscription Type:</strong> <%= subscriptionType %></p>
+        <p><strong>Expiry Date:</strong> <%= expiryDate %></p>
+        <p><strong>Thermometer Included:</strong> <%= thermometerIncluded ? 'Yes' : 'No' %></p>
+        <p><strong>Amount Paid:</strong><%= amountPaid %></p>
+      <% } else { %>
+        <p>No active subscription found.</p>
+      <% } %>
+      
+    </div>
+  </body>
+</html>

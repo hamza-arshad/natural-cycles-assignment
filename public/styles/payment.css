@@ -1,0 +1,94 @@
+#payment-container {
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  padding: 20px;
+}
+
+/* Drop-in Wrapper Styles */
+#dropin-wrapper {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+/* Form Styles */
+form {
+  margin-top: 20px;
+}
+
+label {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 5px;
+  text-align: left;
+}
+
+select,
+input[type='checkbox'] {
+  margin-bottom: 15px;
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+select {
+  background-color: #fff;
+}
+
+#thermometer {
+  display: inline-block;
+  width: auto;
+  margin-right: 10px;
+}
+
+button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 12px 20px;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 100%;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+/* Message Styles */
+#checkout-message h1 {
+  font-size: 22px;
+  margin-bottom: 10px;
+}
+
+#checkout-message p {
+  font-size: 16px;
+  color: #333;
+}
+
+a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Mobile Styles */
+@media (max-width: 480px) {
+  #dropin-wrapper {
+    width: 90%;
+  }
+}

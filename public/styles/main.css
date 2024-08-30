@@ -1,0 +1,61 @@
+/* Global Styles */
+body {
+  font-family: 'Poppins', Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background: linear-gradient(to right, #c3cfe2, #e5e5e5);
+  color: #333;
+}
+
+.container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Universal Input and Button Styles */
+input,
+button {
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+input:focus,
+button:focus {
+  outline: none;
+}
+
+.logout-button {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  text-decoration: none;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+.logout-button:hover {
+  background-color: #0056b3;
+}
+
+/* Add subtle animations */
+input,
+button {
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+input:focus {
+  transform: scale(1.02);
+}
+
+button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
