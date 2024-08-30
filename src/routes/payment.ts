@@ -11,7 +11,7 @@ router.get('/', async (req: Request, res: Response) => {
   try {
     const userEmail = req.session.userEmail
 
-    const paymentInfo = await Payment.findOne({ email: userEmail })
+    const paymentInfo = await Payment.findOne({ email: userEmail }).sort({ created_at: -1 })
 
     if (paymentInfo) {
       const subscription = await gateway.subscription.find(

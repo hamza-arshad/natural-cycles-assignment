@@ -6,6 +6,12 @@
     <title>Login</title>
     <link rel="stylesheet" href="/styles/main.css" />
     <link rel="stylesheet" href="/styles/login.css" />
+    <style>
+      .error-message {
+        color: #d9534f;
+        margin-top: 10px;
+      }
+    </style>
   </head>
   <body>
     <div class="login-container">
@@ -13,12 +19,40 @@
       <form id="loginForm" action="/login" method="POST">
         <input
           type="email"
+          id="email"
           name="email"
           placeholder="Enter your email"
           required
         />
         <button type="submit">Next</button>
+        <div id="error-message" class="error-message"></div>
       </form>
     </div>
+
+    <script>
+      document.getElementById('loginForm').addEventListener('submit', function(event) {
+        const emailInput = document.getElementById('email');
+        const errorMessage = document.getElementById('error-message');
+
+        errorMessage.textContent = '';
+
+        if (!emailInput.value) {
+          errorMessage.textContent = 'Email is required.';
+          event.preventDefault();
+          return;
+        }
+
+        if (!validateEmail(emailInput.value)) {
+          errorMessage.textContent = 'Please enter a valid email address.';
+          event.preventDefault();
+          return;
+        }
+      });
+
+      function validateEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+      }
+    </script>
   </body>
 </html>
