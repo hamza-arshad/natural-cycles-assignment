@@ -98,7 +98,6 @@
 
       async function processPayment(paymentForm, nonce, subscriptionPlan, thermometer) {
         paymentForm.style.display = 'none';
-        console.log({ thermometer }, 'therm');
         const response = await fetch('/checkout', {
           method: 'POST',
           headers: {
