@@ -7,10 +7,6 @@
     <link rel="stylesheet" href="/styles/payment.css" />
     <link rel="stylesheet" href="/styles/main.css" />
     <script src="https://js.braintreegateway.com/web/dropin/1.43.0/js/dropin.min.js"></script>
-    <script
-      src="http://code.jquery.com/jquery-3.2.1.min.js"
-      crossorigin="anonymous"
-    ></script>
   </head>
   <body>
     <div id="payment-container">
@@ -37,103 +33,124 @@
     </div>
 
     <script>
-      $(document).ready(function () {
-        // Ensure form is shown on page load
-        $('#payment-form').show()
+      document.addEventListener('DOMContentLoaded', () => {
+        const paymentForm = document.getElementById('payment-form');
+        const submitButton = document.getElementById('submit-button');
+        const braintreeToken = '<%= braintreeToken %>';
+        
+        initializeDropinUI(paymentForm, submitButton, braintreeToken);
+      });
 
-        var button = document.querySelector('#submit-button')
+      let dropinInstance;
 
+      function initializeDropinUI(paymentForm, submitButton, braintreeToken) {
         braintree.dropin.create(
           {
-            authorization: 'sandbox_fwc35kc8_wg6396jzkfvxgpdd',
+            authorization: braintreeToken,
             container: '#dropin-container',
           },
           function (createErr, instance) {
-            button.addEventListener('click', function (event) {
-              event.preventDefault()
+            if (createErr) {
+              console.error('Drop-in UI creation error:', createErr);
+              return;
+            }
 
-              // Validate the form before hiding it
-              const subscriptionPlan = $('#subscription-plan').val()
-              const thermometerIncluded = $('#thermometer').is(':checked')
+            dropinInstance = instance; // Store the instance for later use
+            setupFormSubmission(instance, paymentForm, submitButton);
+          }
+        );
+      }
 
-              if (!subscriptionPlan) {
-                $('#checkout-message').html(
-                  '<h1>Error</h1><p>Please select a subscription plan.</p>',
-                )
-                return
-              }
+      function setupFormSubmission(instance, paymentForm, submitButton) {
+        submitButton.addEventListener('click', async function (event) {
+          event.preventDefault();
 
-              // Request payment method only if validation passes
-              instance.requestPaymentMethod(
-                function (requestPaymentMethodErr, payload) {
-                  if (requestPaymentMethodErr) {
-                    console.error(
-                      'Payment method request error:',
-                      requestPaymentMethodErr,
-                    )
-                    $('#checkout-message').html(
-                      '<h1>Error</h1><p>Unable to retrieve payment method. Please try again.</p>',
-                    )
-                    $('#payment-form').show() // Show form again
-                    return
-                  }
+          const subscriptionPlan = document.getElementById('subscription-plan').value;
+          const thermometer = !!document.getElementById('thermometer').checked;
 
-                  // Hide form when processing starts
-                  $('#payment-form').hide()
+          if (!subscriptionPlan) {
+            displayMessage('<h1>Error</h1><p>Please select a subscription plan.</p>');
+            return;
+          }
 
-                  // Send payment data to the server
-                  $.ajax({
-                    type: 'POST',
-                    url: '/checkout',
-                    data: {
-                      paymentMethodNonce: payload.nonce,
-                      subscriptionPlan: subscriptionPlan,
-                      thermometerIncluded: thermometerIncluded,
-                    },
-                    success: function (result) {
-                      if (result.success) {
-                        if (
-                          result.message ===
-                          'You already have an active subscription.'
-                        ) {
-                          $('#checkout-message').html(
-                            '<h1>Subscription Active</h1><p>' +
-                              result.message +
-                              '</p>',
-                          )
-                        } else {
-                          $('#checkout-message').html(
-                            '<h1>Success</h1><p>Your payment was processed successfully!</p>',
-                          )
-                          setTimeout(function () {
-                            window.location.href = '/status'
-                          }, 2000)
-                          instance.teardown(function (teardownErr) {
-                            if (teardownErr) {
-                              console.error('Could not tear down Drop-in UI!')
-                            }
-                          })
-                        }
-                      } else {
-                        $('#checkout-message').html(
-                          '<h1>Error</h1><p>' + result.message + '</p>',
-                        )
-                        $('#payment-form').show() // Show form again in case of failure
-                      }
-                    },
-                    error: function (xhr, status, error) {
-                      $('#checkout-message').html(
-                        '<h1>Error</h1><p>There was a problem processing your payment. Please try again later.</p>',
-                      )
-                      $('#payment-form').show() // Show form again in case of AJAX error
-                    },
-                  })
-                },
-              )
-            })
+          try {
+            const { nonce } = await getPaymentMethod(instance);
+            await processPayment(paymentForm, nonce, subscriptionPlan, thermometer);
+          } catch (error) {
+            console.error('Payment processing error:', error);
+            displayMessage('<h1>Error</h1><p>There was a problem processing your payment. Please try again later.</p>');
+            paymentForm.style.display = 'block'; // Show form again in case of exception
+          }
+        });
+      }
+
+      function getPaymentMethod(instance) {
+        return new Promise((resolve, reject) => {
+          instance.requestPaymentMethod((err, payload) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve(payload);
+            }
+          });
+        });
+      }
+
+      async function processPayment(paymentForm, nonce, subscriptionPlan, thermometer) {
+        paymentForm.style.display = 'none';
+        console.log({ thermometer }, 'therm');
+        const response = await fetch('/checkout', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
           },
-        )
-      })
+          body: JSON.stringify({
+            paymentMethodNonce: nonce,
+            subscriptionPlan: subscriptionPlan,
+            thermometerIncluded: thermometer,
+          }),
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          handlePaymentResult(result);
+        } else {
+          displayMessage('<h1>Error</h1><p>There was a problem processing your payment. Please try again later.</p>');
+          paymentForm.style.display = 'block'; // Show form again in case of fetch error
+        }
+      }
+
+      function handlePaymentResult(result) {
+        if (result.success) {
+          if (result.message === 'You already have an active subscription.') {
+            displayMessage('<h1>Subscription Active</h1><p>' + result.message + '</p>');
+          } else {
+            displayMessage('<h1>Success</h1><p>Your payment was processed successfully!</p>');
+            setTimeout(() => {
+              window.location.href = '/status';
+            }, 2000);
+            teardownDropinUI();
+          }
+        } else {
+          displayMessage('<h1>Error</h1><p>' + result.message + '</p>');
+          document.getElementById('payment-form').style.display = 'block'; // Show form again in case of failure
+        }
+      }
+
+      function teardownDropinUI() {
+        if (dropinInstance) {
+          dropinInstance.teardown(teardownErr => {
+            if (teardownErr) {
+              console.error('Could not tear down Drop-in UI!', teardownErr);
+            }
+          });
+        }
+      }
+
+      function displayMessage(message) {
+        document.getElementById('checkout-message').innerHTML = message;
+      }
     </script>
   </body>
 </html>

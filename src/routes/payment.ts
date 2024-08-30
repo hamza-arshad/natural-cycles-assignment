@@ -22,7 +22,9 @@ router.get('/', async (req: Request, res: Response) => {
         return res.redirect('/status')
       }
     }
-    res.render('payment')
+    res.render('payment', {
+      braintreeToken: process.env.BRAINTREE_TOKEN,
+    })
   } catch (error) {
     console.error('Error fetching subscription:', error)
     res.status(500).send('Internal Server Error')
