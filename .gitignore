@@ -35,3 +35,4 @@ coverage/
 # Ignore IDE/editor config files
 .vscode/
 .idea/
+.vercel

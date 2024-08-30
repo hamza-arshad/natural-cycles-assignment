@@ -1,5 +1,6 @@
 import path from 'path'
 import express, { Request, Response } from 'express'
+import bodyParser from 'body-parser'
 import { connectToDatabase } from './config/database'
 import { sessionConfig } from './config/session'
 import { checkSession } from './middlewares/authMiddleware'
@@ -12,8 +13,8 @@ const login = require('./routes/login')
 const app = express()
 const port = process.env.PORT || 3000
 
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // Serve static files (HTML, CSS, JS)
 app.use(express.static(path.join(__dirname, '..', 'public')))
